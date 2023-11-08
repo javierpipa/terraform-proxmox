@@ -1,0 +1,91 @@
+
+
+resource "proxmox_lxc" "basic" {
+  target_node  = "pve"
+  hostname     = "lxc-basic"
+  ostemplate   = "local:vztmpl/ubuntu-20.04-standard_20.04-1_amd64.tar.gz"
+  password     = "BasicLXCContainer"
+  unprivileged = true
+
+  // Terraform will crash without rootfs defined
+  rootfs {
+    storage = "local-zfs"
+    size    = "8G"
+  }
+
+  network {
+    name   = "eth0"
+    bridge = "vmbr0"
+    ip     = "dhcp"
+  }
+
+}
+
+---------
+resource "proxmox_vm_qemu" "terra_srv1" {
+    name= "terra_srv1"
+    desc= "Centos demo server with Terraform"
+    target_node = "proxmox"
+
+    
+    clone = "centos7base"
+
+    agent = 1
+    cores = 2
+    sockets = 1
+    cpu = "host"
+    memory = 2048
+
+    network {
+        bridge = "vmbr0"
+        model = "virtio"
+    }
+
+    disk {
+        storage = "local-lvm"
+        type = "virtio"
+        size = "32G"
+    }
+
+
+}
+
+
+network {
+        bridge = "vmbr0"
+        model = "virtio"
+    }
+
+    disk {
+        storage = "local-lvm"
+        type = "virtio"
+        size = "32G"
+    }
+
+
+    network {
+        bridge = "vmbr0"
+        firewall  = false
+        link_down = false
+        model = "virtio"
+    }
+
+resource "proxmox_lxc" "basic" {
+  target_node  = "pve1"
+  hostname     = "lxc-basic"
+  ostemplate   = "isos:vztmpl/ubuntu-18.04-standard_18.04.1-1_amd64.tar.gz"
+  password     = "BasicLXCContainer"
+  unprivileged = true
+
+  // Terraform will crash without rootfs defined
+  rootfs {
+    storage = "local-lvm"
+    size    = "8G"
+  }
+
+  network {
+    name   = "eth0"
+    bridge = "vmbr0"
+    ip     = "dhcp"
+  }
+}
